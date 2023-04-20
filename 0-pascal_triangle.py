@@ -1,27 +1,28 @@
 #!/usr/bin/python3
-"""Pascal Triangle Interview Challenge for Alx project conducted by Dr Marcus"""
-
-
 def pascal_triangle(n):
-    """returns a list of lists of numbers
-    representing the pascal triangle"""
+    """
+    Returns a list of lists of integers representing the Pascal's triangle of n.
+
+    Args:
+    n (int): The number of rows to generate in the Pascal's triangle.
+
+    Returns:
+    A list of lists of integers representing the Pascal's triangle of n.
+    """
     if n <= 0:
         return []
+    
+    triangle = [[1]]
 
-    pascal_triangle = [0] * n
 
-    for i in range(n):
-        # This code snipet define and explained that  a row is  fill first and last idx with 1
-        row = [0] * (i+1)
-        row[0] = 1
-        row[len(row) - 1] = 1
+    for i in range(1, n):
+        row = [1]
 
         for j in range(1, i):
-            if j > 0 and j < len(row):
-                x = pascal_triangle[i - 1][j]
-                y = pascal_triangle[i - 1][j - 1]
-                row[j] = x + y
+            row.append(triangle[i-1][j-1] + triangle[i-1][j])
 
-        pascal_triangle[i] = row
+        row.append(1)
+        triangle.append(row)
 
-    return pascal_triangle
+    return triangle
+

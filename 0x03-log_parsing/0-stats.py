@@ -1,52 +1,36 @@
 #!/usr/bin/python3
-"""
-This module contains a method that reads stdin line by line and
-computes metrics
-"""
-import dis
+"""reads stdin line by line and computes metrics:"""
+
 import sys
 
+cache = {'200': 0, '301': 0, '400': 0, '401': 0,
+         '403': 0, '404': 0, '405': 0, '500': 0}
+total_size = 0
+counter = 0
 
-def display_metrics(total_size, status_code):
-    """
-    Function that print the metrics
-    """
+try:
+    for line in sys.stdin:
+        line_list = line.split(" ")
+        if len(line_list) > 4:
+            code = line_list[-2]
+            size = int(line_list[-1])
+            if code in cache.keys():
+                cache[code] += 1
+            total_size += size
+            counter += 1
 
+        if counter == 10:
+            counter = 0
+            print('File size: {}'.format(total_size))
+            for key, value in sorted(cache.items()):
+                if value != 0:
+                    print('{}: {}'.format(key, value))
+
+except Exception as err:
+    pass
+
+finally:
     print('File size: {}'.format(total_size))
-    for key, value in sorted(status_code.items()):
+    for key, value in sorted(cache.items()):
         if value != 0:
             print('{}: {}'.format(key, value))
-
-
-if __name__ == '__main__':
-    total_size = 0
-    status_code = {
-        '200': 0,
-        '301': 0,
-        '400': 0,
-        '401': 0,
-        '403': 0,
-        '404': 0,
-        '405': 0,
-        '500': 0
-    }
-
-    try:
-        i = 0
-        for line in sys.stdin:
-            args = line.split()
-            if len(args) > 6:
-                status = args[-2]
-                file_size = args[-1]
-                total_size += int(file_size)
-                if status in status_code:
-                    i += 1
-                    status_code[status] += 1
-                    if i % 10 == 0:
-                        display_metrics(total_size, status_code)
-
-    except KeyboardInterrupt:
-        display_metrics(total_size, status_code)
-        raise
-    else:
-        display_metrics(total_size, status_code)

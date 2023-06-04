@@ -1,27 +1,26 @@
-import requests
-import sys
+#!/usr/bin/node
+// script that prints all characters of a Star Wars movie:
+const request = require('request');
+const movieId = process.argv[2];
+const options = {
+  url: 'https://swapi-api.alx-tools.com/api/films/' + movieId,
+  method: 'GET'
+};
 
-def get_movie_characters(movie_id):
-    url = f"https://swapi.dev/api/films/{movie_id}/"
-    response = requests.get(url)
-    if response.status_code == 200:
-        movie_data = response.json()
-        character_urls = movie_data['characters']
-        for character_url in character_urls:
-            character_response = requests.get(character_url)
-            if character_response.status_code == 200:
-                character_data = character_response.json()
-                character_name = character_data['name']
-                print(character_name)
-            else:
-                print(f"Failed to retrieve character: {character_url}")
-    else:
-        print(f"Failed to retrieve movie: {url}")
+request(options, function (error, response, body) {
+  if (!error) {
+    const characters = JSON.parse(body).characters;
+    printCharacters(characters, 0);
+  }
+});
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python script.py [movie_id]")
-    else:
-        movie_id = sys.argv[1]
-        get_movie_characters(movie_id)
-
+function printCharacters (characters, index) {
+  request(characters[index], function (error, response, body) {
+    if (!error) {
+      console.log(JSON.parse(body).name);
+      if (index + 1 < characters.length) {
+        printCharacters(characters, index + 1);
+      }
+    }
+  });
+}
